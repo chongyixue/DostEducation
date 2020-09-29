@@ -11,7 +11,6 @@ import os
 # Get password from environment
 PASSWORD = os.environ.get('PGPASSWORD')
 
-
 appName = "PySpark SQL example - aggregate user - via JDBC"#appname shows on Spark UI
 master = "local"
 JDBCjar_path = "~/postgresql-42.2.6.jar"
@@ -35,8 +34,21 @@ password = PASSWORD
 #url = "jdbc:postgresql://35.245.162.58:5432/postgres/";
 #url = 'jdbc:postgresql://%s:5432/%s?user=%s&password=%s'%('35.245.162.58','dost-data','postgres',password)
 #url = "jdbc:postgresql://35.245.162.58:5432";
-url = "jdbc:postgresql://postgres@35.245.162.58:5432/postgres";
+#url = "jdbc:postgresql://postgres@35.245.162.58:5432/postgres";
 #url = "jdbc:postgresql://localhost:5432/postgres";
+url = "jdbc:postgresql://127.0.0.1:5432/postgres";
+
+
+#dbname = "35.245.162.58:5432/postgress"
+#instance_conn_name="dost-data"
+#dbname = "127.0.0.1:5432/postgres"
+#instance_conn_name="dost-demo:us-east4:dost-data"
+
+#url = "jdbc:postgresql:///"+dbname+"?cloudSqlInstance="+instance_conn_name+\
+#    "&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user="+user+\
+#    "&password="+password
+
+
 
 #jdbcDF = spark.read \
 #    .format("jdbc") \
@@ -47,7 +59,8 @@ url = "jdbc:postgresql://postgres@35.245.162.58:5432/postgres";
 #    .load()
 
 
-
+#properties = {"user": "postgres", "password": password,
+#              "driver": "org.postgresql.Driver"}
 
 jdbcDF = spark.read \
     .format("jdbc") \
@@ -56,6 +69,15 @@ jdbcDF = spark.read \
     .option("user", user) \
     .option("password",password) \
     .load()
+
+"""
+jdbcDF = spark.read \
+    .format("jdbc") \
+    .option("url",url) \
+    .option("properties",properties)\
+    .option("dbtable", "campaign") \
+    .load()
+"""
     
 
 print("loaded!")
