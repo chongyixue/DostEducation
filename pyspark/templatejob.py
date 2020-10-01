@@ -1,19 +1,21 @@
 from pprint import pprint
 from pyspark import SparkContext, SparkConf, SQLContext
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import to_date, col
+from pyspark.sql.functions import to_date, col, current_date, datediff
 from pyspark.sql.types import (
     BooleanType, DateType, IntegerType, NumericType, StringType,
     StructField, StructType
 )
+
+from pyspark.sql import functions as F
 import os
 
-# Get password from environment
-PASSWORD = os.environ.get('PGPASSWORD')
 
 appName = "PySpark SQL example - aggregate user - via JDBC"#appname shows on Spark UI
 master = "local"
-JDBCjar_path = "~/postgresql-42.2.6.jar"
+#JDBCjar_path = "/home/yc983_cornell_edu/postgresql-42.2.16.jar"
+JDBCjar_path = os.environ.get("JARPATH")
+
 
 conf = SparkConf() \
     .setAppName(appName) \
@@ -24,71 +26,40 @@ sqlContext = SQLContext(sc)
 spark = sqlContext.sparkSession
 
 
-#database = "dost-data"
-#table = "campaign"
 user = "postgres"
-password = PASSWORD
+readpassword = os.environ.get("PGPASSWORDREAD")
+writepassword = os.environ.get("PGPASSWORDWRITE")
 
-#url = jdbc:postgresql:///{database_name}?socketFactory=com.google.cloud.sql.postgres.SocketFactory&cloudSqlInstance={connection_name}:{instance_id}
-#url = "jdbc:postgresql:///postgres?socketFactory=com.google.cloud.sql.postgres.SocketFactory&cloudSqlInstance=dost-demo:us-east4:dost-data"
-#url = "jdbc:postgresql://35.245.162.58:5432/postgres/";
-#url = 'jdbc:postgresql://%s:5432/%s?user=%s&password=%s'%('35.245.162.58','dost-data','postgres',password)
-#url = "jdbc:postgresql://35.245.162.58:5432";
-#url = "jdbc:postgresql://postgres@35.245.162.58:5432/postgres";
-#url = "jdbc:postgresql://localhost:5432/postgres";
-url = "jdbc:postgresql://127.0.0.1:5432/postgres";
+# depends on how cloud_sql_proxy is set up
+#readurl = "jdbc:postgresql://127.0.0.1:5432/postgres"
+#writeurl = "jdbc:postgresql://127.0.0.1:5431/postgres"
+readurl = os.environ.get("READURL")
+writeurl = os.environ.get("WRITEURL")
 
 
-#dbname = "35.245.162.58:5432/postgress"
-#instance_conn_name="dost-data"
-#dbname = "127.0.0.1:5432/postgres"
-#instance_conn_name="dost-demo:us-east4:dost-data"
-
-#url = "jdbc:postgresql:///"+dbname+"?cloudSqlInstance="+instance_conn_name+\
-#    "&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user="+user+\
-#    "&password="+password
-
-
-
-#jdbcDF = spark.read \
-#    .format("jdbc") \
-#    .option("url", "jdbc:postgresql://localhost:5432/postgres") \
-#    .option("dbtable", "campaign") \
-#    .option("user", user) \
-#    .option("password", password) \
-#    .load()
-
-
-#properties = {"user": "postgres", "password": password,
-#              "driver": "org.postgresql.Driver"}
-
-jdbcDF = spark.read \
-    .format("jdbc") \
-    .option("url",url) \
-    .option("dbtable", "campaign") \
-    .option("user", user) \
-    .option("password",password) \
-    .load()
-
-"""
-jdbcDF = spark.read \
-    .format("jdbc") \
-    .option("url",url) \
-    .option("properties",properties)\
-    .option("dbtable", "campaign") \
-    .load()
-"""
-    
+#READ
+def readpsql(tablename):
+    DF = spark.read \
+        .format("jdbc") \
+        .option("url",readurl) \
+        .option("dbtable", "campaign") \
+        .option("user", user) \
+        .option("password",readpassword)\
+        .load()
+    return DF 
+campaignDF = readpsql("campaign")
 
 print("loaded!")
 
-jdbcDF.createOrReplaceTempView("campaign")
+campaignDF.createOrReplaceTempView("campaign")
 
+
+# TRANSFORM
 
 spark.sql("""
     SELECT COUNT(*)
     FROM campaign
-""").show()    
+""").show()
 
 test_query = spark.sql("""
         SELECT
@@ -106,14 +77,13 @@ test_query = spark.sql("""
 
 
 
-# Postgresql info
+# WRITE
 
 mode = "overwrite"
-url = "jdbc:postgresql://127.0.0.1:5432/postgres"
-properties = {"user": "postgres", "password": password,
+properties = {"user": "postgres", "password": writepassword,
               "driver": "org.postgresql.Driver"}
 
-test_query.write.jdbc(url=url, table='dummy',
+test_query.write.jdbc(url=writeurl, table='dummy2',
                       mode=mode, properties=properties)
 
 print("Write complete!")
