@@ -47,7 +47,46 @@ Provider\_number is the number that a user calls to sign up for a particular pro
 
 
 
-# Data Warehouse Schema
+# Data Warehouse Schema-The Plan
+All of the tables created in this section will be stored in a google-managed PostgreSQL database.
+## List of Small Table Creation
+1. partnerorg - id,name,provider\_number
+2. programlist - seq\_id, max\_seq\_id
+
+
+
+## Fact Table
+1. **userprogram\_fact**
+	- Keys
+		- user
+		- program
+	- Facts
+		- created_on (subtle thinking later - user sign up diff programs at a later data)
+		- month1date
+		- month3date
+		- month5date
+		- programenddate
+		- partnerorg\_id
+		- month1CompletedLessons
+		- month1CompletedMinutes
+		- month3CompletedLessons
+		- month3CompletedMinutes
+		- EOPCompletedLessons
+		- EOPCompletedMinutes
+
+2. Aggregation of the Fact Table for reporting metrics and Chartio
+	- EngagnementMetric
+
+
+
+
+
+
+
+
+
+
+
 
 
 
