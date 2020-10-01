@@ -10,7 +10,7 @@ A data warehouse will be built for the purpose of analytics and visualization th
 # Database Schema (Simplified)
 ![Postgresql Tables](/images/DBsimplified.png)
 
-1. **users**\\
+1. **users**\n
 This table records every user who signed up. Key columns:
 	- created\_on
 
