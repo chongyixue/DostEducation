@@ -7,7 +7,13 @@ Insight Project
 # Solution
 A data warehouse will be built for the purpose of analytics and visualization through Chartio. Batch processing will be done on the google-managed PostgreSQL database.
 
+# Database Schema
+![Postgresql Tables](/images/DBsimplified.png)
 
+
+
+
+# Data Warehouse Schema
 
 
 

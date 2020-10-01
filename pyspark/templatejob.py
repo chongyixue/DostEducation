@@ -90,32 +90,33 @@ spark.sql("""
     FROM campaign
 """).show()    
 
-#test_query = spark.sql("""
-#        SELECT
-#                user_id,
-#                COUNT (id)
-#        FROM
-#                campaign
-#        WHERE
-#                status = 'completed'
-#        GROUP BY
-#                user_id
-#""")
+test_query = spark.sql("""
+        SELECT
+                user_id,
+                COUNT (id)
+        FROM
+                campaign
+        WHERE
+                status = 'completed'
+        GROUP BY
+                user_id
+        LIMIT 10
+""")
 
 
 
 
 # Postgresql info
 
-#mode = "overwrite"
-#url = "jdbc:postgresql://35.245.162.58:5432/dost-data"
-#properties = {"user": "postgres", "password": password,
-#              "driver": "org.postgresql.Driver"}
-#
-#test_query.write.jdbc(url=url, table='campaignaggtest',
-#                      mode=mode, properties=properties)
-#
-#print("Write complete!")
+mode = "overwrite"
+url = "jdbc:postgresql://127.0.0.1:5432/postgres"
+properties = {"user": "postgres", "password": password,
+              "driver": "org.postgresql.Driver"}
+
+test_query.write.jdbc(url=url, table='dummy',
+                      mode=mode, properties=properties)
+
+print("Write complete!")
 
 spark.stop()
 
