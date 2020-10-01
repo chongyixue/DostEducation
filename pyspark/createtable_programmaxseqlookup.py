@@ -31,6 +31,7 @@ readpassword = os.environ.get("PGPASSWORDREAD")
 writeuser = os.environn.get("WRITEPGUSER") 
 writepassword = os.environ.get("PGPASSWORDWRITE")
 
+
 # depends on how cloud_sql_proxy is set up
 #readurl = "jdbc:postgresql://127.0.0.1:5432/postgres"
 #writeurl = "jdbc:postgresql://127.0.0.1:5431/postgres"
@@ -43,36 +44,31 @@ def readpsql(tablename):
     DF = spark.read \
         .format("jdbc") \
         .option("url",readurl) \
-        .option("dbtable",tablename) \
+        .option("dbtable", tablename) \
         .option("user", readuser) \
         .option("password",readpassword)\
         .load()
     return DF 
-campaignDF = readpsql("campaign")
+programmaxseqlookupDF = readpsql("programseq")
 
 print("loaded!")
 
-campaignDF.createOrReplaceTempView("campaign")
-
+programmaxseqlookupDF.createOrReplaceTempView("programseq")
 
 # TRANSFORM
 
-spark.sql("""
-    SELECT COUNT(*)
-    FROM campaign
-""").show()
+#spark.sql("""
+#    SELECT COUNT(*)
+#    FROM campaign
+#""").show()
 
 test_query = spark.sql("""
-        SELECT
-                user_id,
-                COUNT (id)
-        FROM
-                campaign
-        WHERE
-                status = 'completed'
-        GROUP BY
-                user_id
-        LIMIT 10
+SELECT 
+	program_id,
+	MAX(sequence_index) AS maxseq
+FROM programseq
+GROUP BY program_id
+ORDER BY program_id
 """)
 
 
@@ -84,7 +80,7 @@ mode = "overwrite"
 properties = {"user": writeuser, "password": writepassword,
               "driver": "org.postgresql.Driver"}
 
-test_query.write.jdbc(url=writeurl, table='dummy2',
+test_query.write.jdbc(url=writeurl, table='programMaxSeqLookup',
                       mode=mode, properties=properties)
 
 print("Write complete!")
