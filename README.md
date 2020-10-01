@@ -7,9 +7,19 @@ Insight Project
 # Solution
 A data warehouse will be built for the purpose of analytics and visualization through Chartio. Batch processing will be done on the google-managed PostgreSQL database.
 
-# Database Schema
+# Database Schema (Simplified)
 ![Postgresql Tables](/images/DBsimplified.png)
 
+1. Campaign: records every phone calls to each user. Key columns:
+	- experience\_id 
+	- program\_id
+	- user\_id
+	- listen\_secs
+	- timestamps:
+		- attempted\_timestamp
+		- call\_start\_time
+		- call\_end\_time
+	- programseq\_id
 
 
 
