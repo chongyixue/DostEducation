@@ -10,11 +10,11 @@ A data warehouse will be built for the purpose of analytics and visualization th
 # Database Schema (Simplified)
 ![Postgresql Tables](/images/DBsimplified.png)
 
-## users
+1. users
 This table records every user who signed up. Key columns:
 	- created\_on
 
-## campaign 
+2. campaign 
 Records every phone calls to each user. Key columns:
 	- experience\_id 
 	- program\_id
@@ -26,7 +26,7 @@ Records every phone calls to each user. Key columns:
 		- call\_end\_time
 	- programseq\_id
 
-## programseq
+3. programseq
 Key columns:
 	- program\_id
 	- sequence\_index
@@ -35,7 +35,7 @@ Key columns:
 
 There are currently 28 distinct program\_id. Programs typically take 6 months, or 112 sequences.
 
-## experience
+4. experience
 Whenever a user signs for a new program, or changed their phone number to be reached, a new experience entry is recorded.
 Key columns:
 	- user\_id
