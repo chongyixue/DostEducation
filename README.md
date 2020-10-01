@@ -26,7 +26,7 @@ Records every phone calls to each user. Key columns:
 		- call\_end\_time
 	- programseq\_id
 
-3. **programseq**\\
+3. **programseq**<br/>
 Key columns:
 	- program\_id
 	- sequence\_index
@@ -35,7 +35,7 @@ Key columns:
 
 There are currently 28 distinct program\_id. Programs typically take 6 months, or 112 sequences.
 
-4. **experience** \\
+4. **experience**<br/>
 Whenever a user signs for a new program, or changed their phone number to be reached, a new experience entry is recorded.
 Key columns:
 	- user\_id
