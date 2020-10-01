@@ -10,11 +10,11 @@ A data warehouse will be built for the purpose of analytics and visualization th
 # Database Schema (Simplified)
 ![Postgresql Tables](/images/DBsimplified.png)
 
-1. **users**\n
+1. **users**<br/>
 This table records every user who signed up. Key columns:
 	- created\_on
 
-2. **campaign**\\
+2. **campaign**<br/>
 Records every phone calls to each user. Key columns:
 	- experience\_id 
 	- program\_id
