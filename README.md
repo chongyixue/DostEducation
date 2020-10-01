@@ -10,7 +10,12 @@ A data warehouse will be built for the purpose of analytics and visualization th
 # Database Schema (Simplified)
 ![Postgresql Tables](/images/DBsimplified.png)
 
-1. Campaign: records every phone calls to each user. Key columns:
+## users
+This table records every user who signed up. Key columns:
+	- created\_on
+
+## campaign 
+Records every phone calls to each user. Key columns:
 	- experience\_id 
 	- program\_id
 	- user\_id
@@ -20,6 +25,25 @@ A data warehouse will be built for the purpose of analytics and visualization th
 		- call\_start\_time
 		- call\_end\_time
 	- programseq\_id
+
+## programseq
+Key columns:
+	- program\_id
+	- sequence\_index
+	- week
+	- day
+
+There are currently 28 distinct program\_id. Programs typically take 6 months, or 112 sequences.
+
+## experience
+Whenever a user signs for a new program, or changed their phone number to be reached, a new experience entry is recorded.
+Key columns:
+	- user\_id
+	- provider\_number
+	- phone
+Provider\_number is the number that a user calls to sign up for a particular program. This number uniquely defines through which partner a user signed up for a program in Dost.
+
+
 
 
 
