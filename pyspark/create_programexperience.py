@@ -37,6 +37,7 @@ writepassword = os.environ.get("PGPASSWORDWRITE")
 readurl = os.environ.get("READURL")
 writeurl = os.environ.get("WRITEURL")
 
+
 #READ
 def readpsql(tablename):
     DF = spark.read \
@@ -47,34 +48,24 @@ def readpsql(tablename):
         .option("password",readpassword)\
         .load()
     return DF 
-campaignDF = readpsql("campaign")
+
+experienceDF = readpsql("experience")
 
 print("loaded!")
 
-campaignDF.createOrReplaceTempView("campaign")
-
+experienceDF.createOrReplaceTempView("experience")
 
 # TRANSFORM
 
-spark.sql("""
-    SELECT COUNT(*)
-    FROM campaign
-""").show()
-
 test_query = spark.sql("""
-        SELECT
-                user_id,
-                COUNT (id)
-        FROM
-                campaign
-        WHERE
-                status = 'completed'
-        GROUP BY
-                user_id
-        LIMIT 10
+select 
+	user_id,
+	program_id,
+	MIN(start_date) AS prog_start
+from experience
+GROUP BY program_id,user_id
+ORDER BY prog_start
 """)
-
-
 
 
 # WRITE
@@ -83,7 +74,7 @@ mode = "overwrite"
 properties = {"user": writeuser, "password": writepassword,
               "driver": "org.postgresql.Driver"}
 
-test_query.write.jdbc(url=writeurl, table='dummy2',
+test_query.write.jdbc(url=writeurl, table='program_experience',
                       mode=mode, properties=properties)
 
 print("Write complete!")

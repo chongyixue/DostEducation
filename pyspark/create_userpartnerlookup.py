@@ -37,6 +37,7 @@ writepassword = os.environ.get("PGPASSWORDWRITE")
 readurl = os.environ.get("READURL")
 writeurl = os.environ.get("WRITEURL")
 
+
 #READ
 def readpsql(tablename):
     DF = spark.read \
@@ -47,34 +48,29 @@ def readpsql(tablename):
         .option("password",readpassword)\
         .load()
     return DF 
-campaignDF = readpsql("campaign")
+
+usersDF = readpsql("users")
+partnerDF = readpsql("partner")
+channelDF = readpsql("channel")
 
 print("loaded!")
 
-campaignDF.createOrReplaceTempView("campaign")
-
+usersDF.createOrReplaceTempView("users")
+partnerDF.createOrReplaceTempView("partner")
+channelDF.createOrReplaceTempView("channel")
 
 # TRANSFORM
 
-spark.sql("""
-    SELECT COUNT(*)
-    FROM campaign
-""").show()
-
 test_query = spark.sql("""
-        SELECT
-                user_id,
-                COUNT (id)
-        FROM
-                campaign
-        WHERE
-                status = 'completed'
-        GROUP BY
-                user_id
-        LIMIT 10
+SELECT 
+	users.id,
+	--users.name,
+	partner.channel_id,
+	channel.name
+FROM users
+INNER JOIN partner ON users.partner_id=partner.id
+INNER JOIN channel ON channel.id=partner.channel_id
 """)
-
-
 
 
 # WRITE
@@ -83,7 +79,7 @@ mode = "overwrite"
 properties = {"user": writeuser, "password": writepassword,
               "driver": "org.postgresql.Driver"}
 
-test_query.write.jdbc(url=writeurl, table='dummy2',
+test_query.write.jdbc(url=writeurl, table='userpartner_lookup',
                       mode=mode, properties=properties)
 
 print("Write complete!")
