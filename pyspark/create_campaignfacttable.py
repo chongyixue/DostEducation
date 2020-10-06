@@ -31,7 +31,6 @@ readpassword = os.environ.get("PGPASSWORDREAD")
 writeuser = os.environ.get("WRITEPGUSER") 
 writepassword = os.environ.get("PGPASSWORDWRITE")
 
-
 # depends on how cloud_sql_proxy is set up
 #readurl = "jdbc:postgresql://127.0.0.1:5432/postgres"
 #writeurl = "jdbc:postgresql://127.0.0.1:5431/postgres"
@@ -40,37 +39,61 @@ writeurl = os.environ.get("WRITEURL")
 
 
 #READ
-def readpsql(tablename):
+def readpsql(tablename, read = 1):
+    if read==1:
+        url = readurl
+        usr = readuser
+        pswrd = readpassword
+    else:
+        url = writeurl
+        usr = writeuser
+        pswrd = writepassword
     DF = spark.read \
         .format("jdbc") \
-        .option("url",readurl) \
-        .option("dbtable", tablename) \
-        .option("user", readuser) \
-        .option("password",readpassword)\
+        .option("url",url) \
+        .option("dbtable",tablename) \
+        .option("user", usr) \
+        .option("password",pswrd)\
         .load()
     return DF 
-programmaxseqlookupDF = readpsql("programseq")
+    
+
+
+campaignDF = readpsql("campaign")
+programmaxseqDF = readpsql('programmaxseqlookup',0)
+program_expDF = readpsql("program_experience",0)
+userpartnerDF = readpsql("userpartner_lookup",0)
+
 
 print("loaded!")
 
-programmaxseqlookupDF.createOrReplaceTempView("programseq")
+campaignDF.createOrReplaceTempView("campaign")
+program_expDF.createOrReplaceTempView("program_experience")
+userpartnerDF.createOrReplaceTempView("userpartner_lookup")
+programmaxseqDF.createOrReplaceTempView("programmaxseqlookup")
+
 
 # TRANSFORM
 
-#spark.sql("""
-#    SELECT COUNT(*)
-#    FROM campaign
-#""").show()
-
 test_query = spark.sql("""
-SELECT 
-	program_id,
-	MAX(sequence_index) AS maxseq
-FROM programseq
-GROUP BY program_id
-ORDER BY program_id
+CREATE TABLE campaignFact AS
+SELECT
+        campaign.user_id,
+        users.created_on,
+        campaign.deploy_datetime,
+        campaign.status,
+        campaign.program_id,
+        program_experience.prog_start,
+        campaign.listen_secs,
+        userpartner_lookup.channel_id,
+        programmaxseqlookup.maxseq
+FROM campaign
+INNER JOIN program_experience
+        ON (program_experience.user_id=campaign.user_id AND program_experience.program_id = campaign.program_id)
+INNER JOIN programmaxseqlookup  ON programmaxseqlookup.program_id=campaign.program_id
+INNER JOIN userpartner_lookup ON userpartner_lookup.id=campaign.user_id
+INNER JOIN users ON users.id=campaign.user_id
 """)
-
 
 
 
@@ -80,7 +103,7 @@ mode = "overwrite"
 properties = {"user": writeuser, "password": writepassword,
               "driver": "org.postgresql.Driver"}
 
-test_query.write.jdbc(url=writeurl, table='programMaxSeqLookup',
+test_query.write.jdbc(url=writeurl, table='campaignFact',
                       mode=mode, properties=properties)
 
 print("Write complete!")

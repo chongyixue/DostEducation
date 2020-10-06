@@ -61,32 +61,32 @@ spark.sql("""
     FROM campaign
 """).show()
 
-test_query = spark.sql("""
-        SELECT
-                user_id,
-                COUNT (id)
-        FROM
-                campaign
-        WHERE
-                status = 'completed'
-        GROUP BY
-                user_id
-        LIMIT 10
-""")
+#test_query = spark.sql("""
+#        SELECT
+#                user_id,
+#                COUNT (id)
+#        FROM
+#                campaign
+#        WHERE
+#                status = 'completed'
+#        GROUP BY
+#                user_id
+#        LIMIT 10
+#""")
 
 
 
 
 # WRITE
 
-mode = "overwrite"
-properties = {"user": writeuser, "password": writepassword,
-              "driver": "org.postgresql.Driver"}
-
-test_query.write.jdbc(url=writeurl, table='dummy2',
-                      mode=mode, properties=properties)
-
-print("Write complete!")
+#mode = "overwrite"
+#properties = {"user": writeuser, "password": writepassword,
+#              "driver": "org.postgresql.Driver"}
+#
+#test_query.write.jdbc(url=writeurl, table='dummyOct',
+#                      mode=mode, properties=properties)
+#
+#print("Write complete!")
 
 spark.stop()
 
