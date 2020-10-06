@@ -28,8 +28,8 @@ Set up password and sensitive information as environmental variable
 	./cloud_sql_proxy -instances=<database instance name>=tcp:5430,<warehouse instance name>:5432
 	````
 2. Submit Spark job
-````bash
-spark-submit --driver-class-path <jar path> --jars <jar path> <python job file>
-````
+	````bash
+	spark-submit --driver-class-path <jar path> --jars <jar path> <python job file>
+	````
 
 
