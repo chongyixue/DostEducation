@@ -33,10 +33,11 @@ writeuser=models.Variable.get('writeuser')
 writepassword=models.Variable.get('writepassword')
 readIP=models.Variable.get('readIP')
 writeIP=models.Variable.get('writeIP')
+
 additionalarg1='--driver-class-path '+jarpath
 additionalarg2='--jars '+ jarpath
 
-arglist =list((readuser,readpassword,writeuser,writepassword,readIP,writeIP,additionalarg1,additionalarg2))
+arglist =list((readuser,readpassword,writeuser,writepassword,readIP,writeIP,additionalarg1,additionalarg2,jarpath))
 
 
 
@@ -88,7 +89,7 @@ with models.DAG(
 
 	# Run the PySpark job
 	
-
+	
 	run_spark0 = dataproc_operator.DataProcPySparkOperator(
 		task_id='run_spark0',
 		main=SPARK_CODE0,
@@ -96,7 +97,8 @@ with models.DAG(
 		arguments = arglist,		
 		cluster_name='dataproc-cluster-demo-{{ ds_nodash }}',
 		job_name=dataproc_job_name+'0')
-
+	
+	
 	run_spark1 = dataproc_operator.DataProcPySparkOperator(
 		task_id='run_spark1',
 		main=SPARK_CODE1,
@@ -104,7 +106,7 @@ with models.DAG(
 		arguments = arglist,		
 		cluster_name='dataproc-cluster-demo-{{ ds_nodash }}',
 		job_name=dataproc_job_name+'1')
-
+	
 	
 	run_spark2 = dataproc_operator.DataProcPySparkOperator(
 		task_id='run_spark2',
@@ -140,7 +142,7 @@ with models.DAG(
 
 # STEP 6: Set DAGs dependencies
 # Each task should run after have finished the task before.
-	print_date >> create_dataproc >> run_spark0 >> run_spark1 >> run_spark2 >> run_spark3 >>  delete_dataproc
+	print_date >> create_dataproc >> run_spark0  >> run_spark1 >> run_spark2 >> run_spark3 >>  delete_dataproc
 
 
 

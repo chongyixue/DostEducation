@@ -11,7 +11,7 @@ from pyspark.sql import functions as F
 import sys
 
 appName = "PySpark SQL example - really simple - via JDBC"#appname shows on Spark UI
-JDBCjar_path = "gs://dostbucket/jar/postgresql-42.2.16.jar"
+#JDBCjar_path = "gs://dostbucket/jar/postgresql-42.2.16.jar"
 
 conf = SparkConf() \
 	.setAppName(appName) \
@@ -26,6 +26,7 @@ writeuser=sys.argv[3]
 writepassword=sys.argv[4]
 readip=sys.argv[5]
 writeip=sys.argv[6]
+JDBCjar_path=sys.argv[7]
 readurl='jdbc:postgresql://'+readip+'/postgres'
 writeurl='jdbc:postgresql://'+writeip+'/postgres'
 
