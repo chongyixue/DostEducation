@@ -55,11 +55,9 @@ def readpsql(tablename, read = 1):
 
 mainfactDF = readpsql("hmlmonth",0)
 
-print("loaded!")
 
 mainfactDF.createOrReplaceTempView("hmlmonth")
 
-print("*******************GONNA DO A WRITE NOW******************")
 test_query = spark.sql("""
 SELECT
         (CASE WHEN usr_months_in=0 THEN 1
@@ -77,29 +75,12 @@ GROUP BY months_up_to, hml
 
 
 
-print("********************Spark SQL loaded************************")
 # WRITE
 mode = "overwrite"
 properties = {"user": writeuser, "password": writepassword,
               "driver": "org.postgresql.Driver"}
 test_query.write.jdbc(url=writeurl, table='year2020hml',
                       mode=mode, properties=properties)
-print("**************Write to year2020hml!*****************")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 spark.stop()
 
 

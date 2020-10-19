@@ -58,12 +58,6 @@ print("loaded!")
 
 mainfactDF.createOrReplaceTempView("mainfact")
 
-# TRANSFORM
-#spark.sql("""
-#    SELECT COUNT(*)
-#    FROM campaign
-#""").show()
-print("*******************GONNA DO A WRITE NOW******************")
 test_query = spark.sql("""
 SELECT
 	user_id,
@@ -80,14 +74,12 @@ GROUP BY user_id,deploymonth_abs
 
 
 
-print("********************Spark SQL loaded************************")
 # WRITE
 mode = "overwrite"
 properties = {"user": writeuser, "password": writepassword,
               "driver": "org.postgresql.Driver"}
 test_query.write.jdbc(url=writeurl, table='aggmonth',
                       mode=mode, properties=properties)
-print("**************Write to aggmonth!*****************")
 
 # READ again (maybe oK?)
 test_query.createOrReplaceTempView("aggmonth")
@@ -109,21 +101,6 @@ FROM aggmonth
 """)
 query2.write.jdbc(url=writeurl,table='HMLmonth',
 	mode=mode,properties=properties)
-
-print("*************Write to HMLmonth!******************")
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 spark.stop()
 

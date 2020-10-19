@@ -59,7 +59,6 @@ channelDF = readpsql("channel")
 programseqDF = readpsql("programseq")
 experienceDF = readpsql("experience")
 
-print("loaded!")
 
 usersDF.createOrReplaceTempView("users")
 partnerDF.createOrReplaceTempView("partner")
@@ -100,7 +99,6 @@ ORDER BY prog_start
         """)
 
 
-print("********************Spark SQL loaded************************")
 
 
 # WRITE

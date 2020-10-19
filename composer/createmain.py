@@ -58,7 +58,6 @@ programseqDF=readpsql("programseq")
 usersDF=readpsql("users")
 contentDF=readpsql("content")
 
-print("loaded!")
 
 listen_rateDF.createOrReplaceTempView("listen_rate")
 program_experienceDF.createOrReplaceTempView("program_experience")
@@ -68,12 +67,6 @@ programseqDF.createOrReplaceTempView("programseq")
 usersDF.createOrReplaceTempView("users")
 contentDF.createOrReplaceTempView("content")
 
-# TRANSFORM
-#spark.sql("""
-#    SELECT COUNT(*)
-#    FROM campaign
-#""").show()
-print("*******************GONNA DO A WRITE NOW******************")
 test_query = spark.sql("""
         SELECT
 		lr.user_id,
@@ -99,7 +92,6 @@ test_query = spark.sql("""
 	INNER JOIN content ON content.id=lr.content_id
 	GROUP BY lr.user_id,lr.program_id,deploymonth_abs,lr.content_id
 """)
-print("********************Spark SQL loaded************************")
 
 
 # WRITE
@@ -108,20 +100,7 @@ properties = {"user": writeuser, "password": writepassword,
               "driver": "org.postgresql.Driver"}
 test_query.write.jdbc(url=writeurl, table='mainfact',
                       mode=mode, properties=properties)
-print("**************Write complete!*****************")
 spark.stop()
 
 
-
-
-
-
-"""
-properties = {"user": writeuser, "password": writepassword,
-              "driver": "org.postgresql.Driver"}
-test_query.write.jdbc(url=writeurl, table='copiedcampaign',
-                      mode=mode, properties=properties)
-print("**************Write complete!*****************")
-spark.stop()
-"""
 

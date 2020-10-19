@@ -55,13 +55,6 @@ default_dag_args = {
 
 # STEP 4: Define DAG
 # set the DAG name, add a DAG description, define the schedule interval and pass the default arguments defined before
-#dag = DAG(
-#	dag_id='mydag',
-#	description='DAG for deployment a Dataproc Cluster',
-#	schedule_interval=timedelta(days=1),
-#	default_args=default_dag_args
-#
-#	)
 with models.DAG(
 	'demodag4',
 	description='DAG for deployment a Dataproc Cluster',
@@ -124,14 +117,6 @@ with models.DAG(
 		arguments = arglist,		
 		cluster_name='dataproc-cluster-demo-{{ ds_nodash }}',
 		job_name=dataproc_job_name+'3')
-
-	# BashOperator
-	# Sleep function to have 1 minute to check the dataproc created
-	#sleep_process = BashOperator(
-	#    task_id='sleep_process',
-	#    bash_command='sleep 60'
-	#    )
-	# dataproc_operator
 
 
 	# Delete Cloud Dataproc cluster.
