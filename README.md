@@ -53,10 +53,10 @@ This view combines the campaign table where status are either completed missed, 
 
 
 # Data Warehouse Schema-The Plan
-All of the tables created in this section will be stored in a google-managed PostgreSQL database. The warehouse contains smaller lookup tables joined from the database for easier joins to form the main fact table. 
+All of the tables created in this section will be stored in a google-managed PostgreSQL database. The warehouse contains smaller lookup tables joined from the database for easier joins to form the main table such that slicing and aggregation can be made through this table. 
 
 ## Fact Table
-The fact table schema can be modified, e.g. adding columns if metric requirements change. 
+The main table schema can be modified, e.g. adding columns if metric requirements change. 
 1. **mainfact**
 	- Keys
 		- User_id
